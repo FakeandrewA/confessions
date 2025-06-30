@@ -1,5 +1,6 @@
 import json
 
+from django.utils import timezone
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
@@ -14,6 +15,7 @@ from django.http import JsonResponse
 from .schema import UserRegister,UserLogin
 from pydantic import ValidationError
 
+from .models import UsersConfessions
 # Create your views here.
 
 @require_http_methods(["GET","POST"])
@@ -34,7 +36,6 @@ def register_user(request):
     except ValidationError as e:
         return JsonResponse({"error":e.errors()},status=422) 
     
-
 @require_http_methods(["GET","POST"])
 def login_user(request):
     if request.method == "GET":
@@ -59,12 +60,17 @@ def logout_user(request):
 @require_GET
 @login_required(login_url="/confessions/login/")
 def get_confessions(request):
-    return render(request,"confessions/home.html")
+    user_posts = UsersConfessions.objects.filter(user=request.user).order_by("-created_at")
+    return render(request,"confessions/home.html",{"confessions":user_posts})
 
 @require_POST
 @login_required
 def post_confession(request):
-    return HttpResponse("created confession")
+    content = request.POST.get("content")
+    if not content:
+        return JsonResponse({"error":"Content is required"},status=422)
+    UsersConfessions.objects.create(content=content,user=request.user,created_at=timezone.now())
+    return redirect("/confessions/")
 
 @require_GET
 @login_required
