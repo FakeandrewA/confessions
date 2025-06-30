@@ -1,6 +1,6 @@
 <h1>Your posts will be shown here</h1>
-<form>
-    
-{% csrf_token %}
 
+<form action="logout/" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
 </form>

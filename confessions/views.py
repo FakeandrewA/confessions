@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -16,31 +16,35 @@ from pydantic import ValidationError
 
 # Create your views here.
 
-@csrf_exempt
-@require_POST
+@require_http_methods(["GET","POST"])
 def register_user(request):
-    data = json.loads(request.body)
+
+    if request.method == "GET":
+        return render(request,"confessions/register.html")
+    
     try:
-        user_data = UserRegister(**data)
+        user_data = UserRegister(username=request.POST.get("username"),
+                                 password=request.POST.get("password"),
+                                 email=request.POST.get("email"))
         if(user_data.username != "" and user_data.password != ""):
             user = User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
         else:
             return JsonResponse({"error":"Username or Password cannot be empty"},status=422)
-        
-        return HttpResponse("User Created!")
+        return redirect("/confessions/login/")
     except ValidationError as e:
         return JsonResponse({"error":e.errors()},status=422) 
     
-@csrf_exempt
-@require_POST
+
+@require_http_methods(["GET","POST"])
 def login_user(request):
-    data = json.loads(request.body)
+    if request.method == "GET":
+        return render(request,"confessions/login.html")
     try:
-        creds = UserLogin(**data)
+        creds = UserLogin(username=request.POST.get("username"),password=request.POST.get("password"))
         user = authenticate(username=creds.username,password=creds.password)
         if user is not None:
             login(request,user)
-            return JsonResponse({"message":"Logged in successfully"})
+            return redirect("/confessions/")
         else:
             return JsonResponse({"error":"Invalid Username or Password"},status=401)
     except ValidationError as e:
@@ -50,10 +54,10 @@ def login_user(request):
 @require_POST
 def logout_user(request):
     logout(request)
-    return JsonResponse({"message": "Logged out successfully."})
+    return redirect("/confessions/login/")
 
 @require_GET
-@login_required
+@login_required(login_url="/confessions/login/")
 def get_confessions(request):
     return render(request,"confessions/home.html")
 
