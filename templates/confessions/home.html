@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Whispers from the World</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500&display=swap');
 
         :root {
             /* Themes */
@@ -22,7 +22,7 @@
         [data-theme="ocean"] { --bg-color: var(--bg-color-ocean); --panel-bg: var(--panel-bg-ocean); --text-color: var(--text-color-ocean); --heading-color: var(--heading-color-ocean); --accent-color: var(--accent-color-ocean); --subtle-accent: var(--subtle-accent-ocean); --border-color: var(--border-color-ocean); --shadow-color: var(--shadow-color-ocean); }
 
         body {
-            font-family: 'Quicksand', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -39,7 +39,7 @@
             flex-grow: 1;
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 25px;
+            gap: 30px;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
@@ -76,11 +76,13 @@
         @keyframes autoscroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 
         h2 {
-            font-family: 'Lora', serif;
+            font-family: 'Cormorant Garamond', serif;
             color: var(--heading-color);
             text-align: center;
             margin-top: 0;
+            margin-bottom: 25px;
             font-weight: 600;
+            font-size: 1.8em;
             letter-spacing: 0.5px;
         }
 
@@ -88,11 +90,11 @@
             width: 100%;
             padding: 15px;
             margin-bottom: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Quicksand', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 1em;
             box-sizing: border-box;
             transition: all 0.3s;
@@ -104,7 +106,7 @@
         button {
             background-color: var(--accent-color);
             color: white;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
         }
 
@@ -125,8 +127,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-family: 'Lora', serif;
+            font-family: 'Cormorant Garamond', serif;
             font-style: italic;
+            font-size: 1.2em;
+            line-height: 1.5;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        li:hover {
+            background-color: #fffdfa;
+            border-color: var(--subtle-accent);
         }
 
         .post-content { flex-grow: 1; margin-right: 15px; }
@@ -282,3 +291,4 @@
     </script>
 </body>
 </html>
+
