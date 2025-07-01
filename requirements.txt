@@ -1,0 +1,16 @@
+annotated-types==0.7.0
+asgiref==3.8.1
+Django==5.2.3
+dnspython==2.7.0
+email_validator==2.2.0
+idna==3.10
+psycopg==3.2.9
+psycopg2-binary==2.9.10
+pydantic==2.11.7
+pydantic-settings==2.10.1
+pydantic_core==2.33.2
+python-dotenv==1.1.1
+sqlparse==0.5.3
+typing-inspection==0.4.1
+typing_extensions==4.14.0
+tzdata==2025.2
