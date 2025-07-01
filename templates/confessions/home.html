@@ -31,28 +31,9 @@
             transition: background-color 0.5s, color 0.5s;
         }
 
-        .page-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .main-title {
-            font-family: 'Lora', serif;
-            font-size: 2.2em;
-            color: var(--heading-color);
-            margin: 0;
-        }
+        .page-wrapper { display: flex; flex-direction: column; height: 100%; padding: 20px; box-sizing: border-box; }
+        .header { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 15px; }
+        .main-title { font-family: 'Lora', serif; font-size: 2.2em; color: var(--heading-color); margin: 0; }
 
         .container {
             flex-grow: 1;
@@ -78,39 +59,21 @@
         }
 
         .journal { position: relative; }
-
-        .right-panel {
-            display: grid;
-            grid-template-rows: 1fr 1fr;
-            gap: 25px;
-            min-height: 0;
-        }
-
-        .scroll-widget h2 {
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
+        .right-panel { display: grid; grid-template-rows: 1fr 1fr; gap: 25px; min-height: 0; }
+        .scroll-widget h2 { margin-bottom: 20px; flex-shrink: 0; }
 
         .scroll-container {
             flex-grow: 1;
-            overflow: hidden; /* Changed from auto to hidden for animation */
+            overflow: hidden;
             position: relative;
             -webkit-mask-image: linear-gradient(transparent, black 10%, black 90%, transparent);
             mask-image: linear-gradient(transparent, black 10%, black 90%, transparent);
         }
 
-        .scroll-container ul {
-            animation: autoscroll 60s linear infinite;
-        }
+        .scroll-container ul { animation: autoscroll 60s linear infinite; }
+        .scroll-container:hover ul { animation-play-state: paused; }
 
-        .scroll-container:hover ul {
-            animation-play-state: paused;
-        }
-
-        @keyframes autoscroll {
-            from { transform: translateY(0); }
-            to { transform: translateY(-50%); }
-        }
+        @keyframes autoscroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 
         h2 {
             font-family: 'Lora', serif;
@@ -132,23 +95,24 @@
             font-family: 'Quicksand', sans-serif;
             font-size: 1em;
             box-sizing: border-box;
-            transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+            transition: all 0.3s;
         }
 
         textarea { resize: none; flex-grow: 1; }
+        textarea::placeholder { transition: opacity 0.5s; }
 
         button {
             background-color: var(--accent-color);
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
 
         button:hover { filter: brightness(1.1); }
+        button:active { transform: scale(0.98); filter: brightness(0.95); }
         
-        .journal-form { display: flex; flex-direction: column; height: 100%; }
-        .logout-form { margin-top: auto; padding-top: 15px; }
+        .journal-form { display: flex; flex-direction: column; flex-grow: 1; }
+        .logout-form { padding-top: 15px; }
         .logout-button { background-color: var(--subtle-accent); color: var(--heading-color); }
 
         ul { list-style: none; padding: 0; margin: 0; }
@@ -171,26 +135,17 @@
         .post-actions button { padding: 5px 10px; font-size: 0.8em; margin-left: 5px; width: auto; background: none; border: none; color: var(--accent-color); font-weight: 600; }
         .post-actions button:hover { text-decoration: underline; }
 
-        /* Theme Switcher Popup */
         .theme-switcher { position: absolute; top: 10px; right: 20px; }
         .theme-icon { cursor: pointer; width: 30px; height: 30px; fill: var(--heading-color); }
-        .theme-popup {
-            display: none;
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 20px var(--shadow-color);
-            padding: 10px;
-            z-index: 100;
-        }
+        .theme-popup { display: none; position: absolute; top: 40px; right: 0; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 4px 20px var(--shadow-color); padding: 10px; z-index: 100; }
         .theme-popup.show { display: block; }
         .theme-popup button { display: block; width: 100%; text-align: left; margin-bottom: 5px; }
         .theme-popup button:last-child { margin-bottom: 0; }
 
-        ::-webkit-scrollbar { display: none; } /* Hide scrollbar as it's automatic */
+        .widget-decoration { text-align: center; margin-bottom: 10px; color: var(--subtle-accent); }
+        .widget-decoration svg { width: 50px; height: 20px; }
+
+        ::-webkit-scrollbar { display: none; }
 
     </style>
 </head>
@@ -211,14 +166,18 @@
         </div>
         <div class="container">
             <div class="journal widget">
+                <div class="widget-decoration">
+                    <svg viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,10 Q25,0 50,10 T100,10" stroke="currentColor" fill="transparent" stroke-width="1"/></svg>
+                </div>
                 <form class="journal-form" method="post" action="/confessions/create/">
-                    <h2>Your Private Corner</h2>
+                    <h2>The Inkwell</h2>
                     {% csrf_token %}
-                    <textarea name="content" placeholder="Let your thoughts find a home..." required></textarea>
+                    <textarea id="confession-textarea" name="content" placeholder="Let your thoughts find a home..." required></textarea>
                     <button type="submit">Share Anonymously</button>
-                    <div class="logout-form">
-                        <button type="submit" formaction="logout/" class="logout-button">Close Diary</button>
-                    </div>
+                </form>
+                <form class="logout-form" action="logout/" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Close Diary</button>
                 </form>
             </div>
             <div class="right-panel">
@@ -295,11 +254,31 @@
             scrollContainers.forEach(container => {
                 const list = container.querySelector('ul');
                 if (list && list.children.length > 1) {
-                    // Duplicate content for seamless loop
                     list.innerHTML += list.innerHTML;
                 }
             });
         });
+
+        // Animated Placeholder Logic
+        const placeholders = [
+            "Let your thoughts find a home...",
+            "What's on your mind?",
+            "A quiet place for your words.",
+            "Whisper your secrets here."
+        ];
+        let placeholderIndex = 0;
+        const textarea = document.getElementById('confession-textarea');
+
+        if (textarea) {
+            setInterval(() => {
+                placeholderIndex = (placeholderIndex + 1) % placeholders.length;
+                textarea.style.opacity = '0.5';
+                setTimeout(() => {
+                    textarea.placeholder = placeholders[placeholderIndex];
+                    textarea.style.opacity = '1';
+                }, 500);
+            }, 4000);
+        }
     </script>
 </body>
 </html>
