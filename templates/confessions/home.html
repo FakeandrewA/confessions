@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Home - Futuristic UI</title>
+    <title>Home - Cybernetic UI</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&display=swap');
 
         :root {
-            --primary-color: #0d0d0d;
-            --secondary-color: #1a1a1a;
-            --accent-color: #00ffcc;
-            --text-color: #e0e0e0;
-            --border-color: #00ffcc;
+            --bg-color: #02041b;
+            --primary-glow: #00e1ff;
+            --secondary-glow: #ff00c1;
+            --text-color: #d0d8f0;
+            --panel-bg: rgba(10, 15, 40, 0.5);
+            --border-color: rgba(0, 225, 255, 0.4);
         }
 
         body {
-            font-family: 'Orbitron', sans-serif;
-            background-color: var(--primary-color);
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 20px;
@@ -24,6 +25,10 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 1px 1px, rgba(0, 225, 255, 0.3) 1px, transparent 0),
+                radial-gradient(circle at 15px 15px, rgba(0, 225, 255, 0.15) 1px, transparent 0);
+            background-size: 30px 30px;
         }
 
         .container {
@@ -31,16 +36,24 @@
             grid-template-columns: 1fr 2fr;
             gap: 20px;
             width: 100%;
-            max-width: 1200px;
-            height: 80vh;
+            max-width: 1400px;
+            height: 90vh;
         }
 
-        .dashboard, .my-posts, .other-posts {
-            background-color: var(--secondary-color);
+        .panel {
+            background: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(0, 225, 255, 0.1), inset 0 0 10px rgba(0, 225, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .panel:hover {
+            border-color: rgba(0, 225, 255, 0.8);
+            box-shadow: 0 0 35px rgba(0, 225, 255, 0.2), inset 0 0 15px rgba(0, 225, 255, 0.2);
         }
 
         .dashboard {
@@ -63,41 +76,44 @@
         }
 
         h2 {
-            color: var(--accent-color);
+            color: var(--primary-glow);
             text-align: center;
             margin-top: 0;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 5px var(--primary-glow);
         }
 
         textarea, button {
             width: 100%;
             padding: 15px;
             margin-bottom: 15px;
-            border-radius: 5px;
-            border: 1px solid var(--accent-color);
-            background-color: var(--primary-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: rgba(0, 0, 0, 0.3);
             color: var(--text-color);
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1em;
         }
 
         textarea {
-            resize: vertical;
-            min-height: 150px;
+            resize: none;
+            flex-grow: 1;
         }
 
         button {
-            background-color: var(--accent-color);
-            color: var(--primary-color);
+            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+            color: #fff;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
+            border: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             text-transform: uppercase;
         }
 
         button:hover {
-            background-color: var(--primary-color);
-            color: var(--accent-color);
+            box-shadow: 0 0 20px var(--primary-glow), 0 0 20px var(--secondary-glow);
+            transform: translateY(-2px);
         }
         
         .logout-form {
@@ -105,14 +121,10 @@
         }
 
         .logout-button {
-            background-color: #ff4d4d;
-            color: var(--primary-color);
+             background: linear-gradient(45deg, #ff6b6b, #ff0055);
         }
-        
         .logout-button:hover {
-            background-color: var(--primary-color);
-            color: #ff4d4d;
-            border-color: #ff4d4d;
+            box-shadow: 0 0 20px #ff6b6b;
         }
 
         ul {
@@ -122,14 +134,18 @@
         }
 
         li {
-            background-color: var(--primary-color);
+            background-color: rgba(0,0,0,0.2);
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 5px;
-            border-left: 3px solid var(--accent-color);
+            border-left: 4px solid var(--primary-glow);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: background-color 0.3s;
+        }
+        li:hover {
+            background-color: rgba(0, 225, 255, 0.1);
         }
 
         .post-content {
@@ -138,104 +154,86 @@
         }
 
         .post-actions button {
-            padding: 5px 10px;
-            font-size: 0.8em;
-            margin-left: 5px;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            margin-left: 8px;
             width: auto;
+            background: none;
+            border: 1px solid;
         }
         
         .update-button {
-            background-color: #4d94ff;
-            color: var(--primary-color);
+            border-color: var(--primary-glow);
+            color: var(--primary-glow);
         }
-        
         .update-button:hover {
-            background-color: var(--primary-color);
-            color: #4d94ff;
-            border-color: #4d94ff;
+            background-color: var(--primary-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
         .delete-button {
-            background-color: #ff4d4d;
-            color: var(--primary-color);
+            border-color: var(--secondary-glow);
+            color: var(--secondary-glow);
         }
-        
         .delete-button:hover {
-            background-color: var(--primary-color);
-            color: #ff4d4d;
-            border-color: #ff4d4d;
+            background-color: var(--secondary-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px var(--secondary-glow);
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--primary-color);
-        }
-
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 4px;
+            background: linear-gradient(var(--primary-glow), var(--secondary-glow));
+            border-radius: 10px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
-            background: #00cca3;
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="dashboard">
-            <h2>Create Post</h2>
-            <form method="post" action="/confessions/create/">
+        <div class="dashboard panel">
+            <h2>Control Deck</h2>
+            <form method="post" action="/confessions/create/" style="display: flex; flex-direction: column; height: 100%;">
                 {% csrf_token %}
-                <textarea name="content" placeholder="Share your thoughts..." required></textarea>
-                <button type="submit">Broadcast</button>
+                <textarea name="content" placeholder="Broadcast your signal..." required></textarea>
+                <button type="submit">Transmit</button>
             </form>
             <form class="logout-form" action="logout/" method="post">
                 {% csrf_token %}
-                <button type="submit" class="logout-button">Logout</button>
+                <button type="submit" class="logout-button">Disconnect</button>
             </form>
         </div>
         <div class="right-panel">
-            <div class="my-posts">
-                <h2>My Posts</h2>
+            <div class="my-posts panel">
+                <h2>My Signals</h2>
                 <ul>
                     {% for confession in confessions %}
                         <li>
                             <span class="post-content">{{ confession.content }}</span>
                             <div class="post-actions">
-                                <button class="update-button">Update</button>
-                                <button class="delete-button">Delete</button>
+                                <button class="update-button">Modify</button>
+                                <button class="delete-button">Terminate</button>
                             </div>
                         </li>
                     {% empty %}
-                        <li>No posts yet.</li>
+                        <li>Signal feed is empty.</li>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="other-posts">
-                <h2>Network Feed</h2>
+            <div class="other-posts panel">
+                <h2>Network Echoes</h2>
                 <ul>
                     {# Placeholder for other users' posts #}
-                    <li>
-                        <span class="post-content">Another user's confession...</span>
-                    </li>
-                    <li>
-                        <span class="post-content">This is a post from someone else.</span>
-                    </li>
-                     <li>
-                        <span class="post-content">This is a post from someone else.</span>
-                    </li>
-                     <li>
-                        <span class="post-content">This is a post from someone else.</span>
-                    </li>
-                     <li>
-                        <span class="post-content">This is a post from someone else.</span>
-                    </li>
+                    <li><span class="post-content">Signal from User_7B34... connection is unstable.</span></li>
+                    <li><span class="post-content">Encrypted broadcast intercepted.</span></li>
+                    <li><span class="post-content">Public channel chatter: The rain in Neo-Kyoto is synthetic tonight.</span></li>
+                    <li><span class="post-content">I saw a ship glitter off the shoulder of Orion...</span></li>
                 </ul>
             </div>
         </div>
