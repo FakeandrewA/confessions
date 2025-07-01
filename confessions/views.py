@@ -1,7 +1,7 @@
 import json
 
 from django.utils import timezone
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -82,7 +82,11 @@ def get_confession(request,id:int):
 def put_confession(request,id:int):
     return HttpResponse("updated a confession")
 
+
 @require_http_methods(["DELETE"])
 @login_required
+@csrf_exempt
 def delete_confession(request,id:int):
-    return HttpResponse("deleted a confession")
+    confession = get_object_or_404(UsersConfessions,id=id)
+    confession.delete()
+    return JsonResponse({"deleted":True})

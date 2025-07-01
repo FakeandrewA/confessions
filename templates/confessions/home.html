@@ -199,7 +199,7 @@
                                     <span class="post-content">{{ confession.content }}</span>
                                     <div class="post-actions">
                                         <button>Rewrite</button>
-                                        <button>Let Go</button>
+                                        <button onclick="deleteConfession({{ confession.id }})">Let Go</button>
                                     </div>
                                 </li>
                             {% empty %}
@@ -225,6 +225,22 @@
     </div>
 
     <script>
+        function deleteConfession(id){
+            fetch(`/confessions/delete/${id}/`,{
+                method: "DELETE"
+            }).then(response=>{
+                if(!response.ok)
+                {
+                    throw new Error("Failed to delete");
+                }
+                return response.json();
+            }).then(data=>{
+                console.log(data);
+                console.log("Hello")
+                location.reload()
+            })
+        }
+
         // Theme Switcher Logic
         const themeIcon = document.getElementById('theme-icon');
         const themePopup = document.getElementById('theme-popup');
