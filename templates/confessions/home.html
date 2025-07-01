@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+
     <title>Whispers from the World</title>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500&display=swap');
 
         :root {
             /* Themes */
@@ -13,6 +15,7 @@
             --bg-color-meadow: #f0f4f0; --panel-bg-meadow: #ffffff; --text-color-meadow: #556b55; --heading-color-meadow: #3a523a; --accent-color-meadow: #82a882; --subtle-accent-meadow: #a3c3a3; --border-color-meadow: #e0e8e0; --shadow-color-meadow: rgba(58, 82, 58, 0.1);
             --bg-color-sunset: #3B314D; --panel-bg-sunset: #4C3F63; --text-color-sunset: #EAE2F8; --heading-color-sunset: #FFFFFF; --accent-color-sunset: #E88D67; --subtle-accent-sunset: #C37B89; --border-color-sunset: #3B314D; --shadow-color-sunset: rgba(0, 0, 0, 0.2);
             --bg-color-ocean: #F0F7F8; --panel-bg-ocean: #FFFFFF; --text-color-ocean: #4A6C6F; --heading-color-ocean: #2C4A52; --accent-color-ocean: #5DAA9F; --subtle-accent-ocean: #A8D5D1; --border-color-ocean: #DDE9EB; --shadow-color-ocean: rgba(74, 108, 111, 0.1);
+
         }
 
         [data-theme="dawn"] { --bg-color: var(--bg-color-dawn); --panel-bg: var(--panel-bg-dawn); --text-color: var(--text-color-dawn); --heading-color: var(--heading-color-dawn); --accent-color: var(--accent-color-dawn); --subtle-accent: var(--subtle-accent-dawn); --border-color: var(--border-color-dawn); --shadow-color: var(--shadow-color-dawn); }
@@ -22,7 +25,7 @@
         [data-theme="ocean"] { --bg-color: var(--bg-color-ocean); --panel-bg: var(--panel-bg-ocean); --text-color: var(--text-color-ocean); --heading-color: var(--heading-color-ocean); --accent-color: var(--accent-color-ocean); --subtle-accent: var(--subtle-accent-ocean); --border-color: var(--border-color-ocean); --shadow-color: var(--shadow-color-ocean); }
 
         body {
-            font-family: 'Quicksand', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -39,7 +42,7 @@
             flex-grow: 1;
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 25px;
+            gap: 30px;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
@@ -49,6 +52,7 @@
         .widget {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
+
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 4px 20px var(--shadow-color);
@@ -61,6 +65,7 @@
         .journal { position: relative; }
         .right-panel { display: grid; grid-template-rows: 1fr 1fr; gap: 25px; min-height: 0; }
         .scroll-widget h2 { margin-bottom: 20px; flex-shrink: 0; }
+
 
         .scroll-container {
             flex-grow: 1;
@@ -76,11 +81,13 @@
         @keyframes autoscroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 
         h2 {
-            font-family: 'Lora', serif;
+            font-family: 'Cormorant Garamond', serif;
             color: var(--heading-color);
             text-align: center;
             margin-top: 0;
+            margin-bottom: 25px;
             font-weight: 600;
+            font-size: 1.8em;
             letter-spacing: 0.5px;
         }
 
@@ -88,11 +95,11 @@
             width: 100%;
             padding: 15px;
             margin-bottom: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Quicksand', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 1em;
             box-sizing: border-box;
             transition: all 0.3s;
@@ -101,10 +108,11 @@
         textarea { resize: none; flex-grow: 1; }
         textarea::placeholder { transition: opacity 0.5s; }
 
+
         button {
             background-color: var(--accent-color);
             color: white;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
         }
 
@@ -115,6 +123,7 @@
         .logout-form { padding-top: 15px; }
         .logout-button { background-color: var(--subtle-accent); color: var(--heading-color); }
 
+
         ul { list-style: none; padding: 0; margin: 0; }
 
         li {
@@ -122,11 +131,19 @@
             padding: 20px;
             margin-bottom: 15px;
             border-radius: 10px;
+
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-family: 'Lora', serif;
+            font-family: 'Cormorant Garamond', serif;
             font-style: italic;
+            font-size: 1.2em;
+            line-height: 1.5;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        li:hover {
+            background-color: #fffdfa;
+            border-color: var(--subtle-accent);
         }
 
         .post-content { flex-grow: 1; margin-right: 15px; }
@@ -134,7 +151,6 @@
         li:hover .post-actions { opacity: 1; }
         .post-actions button { padding: 5px 10px; font-size: 0.8em; margin-left: 5px; width: auto; background: none; border: none; color: var(--accent-color); font-weight: 600; }
         .post-actions button:hover { text-decoration: underline; }
-
         .theme-switcher { position: absolute; top: 10px; right: 20px; }
         .theme-icon { cursor: pointer; width: 30px; height: 30px; fill: var(--heading-color); }
         .theme-popup { display: none; position: absolute; top: 40px; right: 0; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 4px 20px var(--shadow-color); padding: 10px; z-index: 100; }
@@ -150,6 +166,7 @@
     </style>
 </head>
 <body>
+
     <div class="page-wrapper">
         <div class="header">
             <h1 class="main-title">Whispers from the World</h1>
