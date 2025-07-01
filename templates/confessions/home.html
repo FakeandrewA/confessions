@@ -20,6 +20,8 @@
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: var(--bg-color);
+            background-image: linear-gradient(rgba(0,0,0,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.015) 1px, transparent 1px);
+            background-size: 20px 20px;
             color: var(--text-color);
             margin: 0;
             padding: 20px;
@@ -44,13 +46,13 @@
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 4px 20px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
         }
 
         .journal {
             grid-column: 1 / 2;
             grid-row: 1 / 3;
-            display: flex;
-            flex-direction: column;
         }
 
         .right-panel {
@@ -84,6 +86,7 @@
             color: var(--text-color);
             font-family: 'Quicksand', sans-serif;
             font-size: 1em;
+            box-sizing: border-box; /* Fixes the grid alignment issue */
         }
 
         textarea {
@@ -138,11 +141,25 @@
             align-items: center;
             font-family: 'Lora', serif;
             font-style: italic;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         .post-content {
             flex-grow: 1;
             margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .post-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            opacity: 0.5;
         }
 
         .post-actions {
@@ -184,10 +201,10 @@
 <body>
     <div class="container">
         <div class="journal widget">
-            <h2>Dear Diary...</h2>
-            <form method="post" action="/confessions/create/" style="display: flex; flex-direction: column; height: 100%;">
+            <h2>Your Private Corner</h2>
+            <form method="post" action="/confessions/create/" style="display: flex; flex-direction: column; flex-grow: 1;">
                 {% csrf_token %}
-                <textarea name="content" placeholder="What's on your mind?" required></textarea>
+                <textarea name="content" placeholder="Let your thoughts find a home..." required></textarea>
                 <button type="submit">Share Anonymously</button>
             </form>
             <form class="logout-form" action="logout/" method="post">
@@ -197,14 +214,17 @@
         </div>
         <div class="right-panel">
             <div class="my-diary widget">
-                <h2>My Entries</h2>
+                <h2>My Chapters</h2>
                 <ul>
                     {% for confession in confessions %}
                         <li>
-                            <span class="post-content">{{ confession.content }}</span>
+                            <span class="post-content">
+                                <svg class="post-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.7,5.2a1,1,0,0,0-1.4,0L13,11.58V3a1,1,0,0,0-2,0V11.58L4.7,5.2a1,1,0,0,0-1.4,1.4L9.58,13H2a1,1,0,0,0,0,2H9.58L3.3,21.2a1,1,0,0,0,1.4,1.4L11,16.42V21a1,1,0,0,0,2,0V16.42l6.3,6.3a1,1,0,0,0,1.4-1.4L14.42,15H22a1,1,0,0,0,0-2H14.42l6.3-6.3A1,1,0,0,0,20.7,5.2Z"/></svg>
+                                {{ confession.content }}
+                            </span>
                             <div class="post-actions">
-                                <button>Edit</button>
-                                <button>Delete</button>
+                                <button>Rewrite</button>
+                                <button>Let Go</button>
                             </div>
                         </li>
                     {% empty %}
@@ -213,7 +233,7 @@
                 </ul>
             </div>
             <div class="shared-thoughts widget">
-                <h2>Shared Thoughts</h2>
+                <h2>Echoes from Others</h2>
                 <ul>
                     {# Placeholder for other users' posts #}
                     <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
