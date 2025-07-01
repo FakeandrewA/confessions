@@ -2,45 +2,203 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Login</title>
+    <title>Login - Whispers from the World</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 40px auto;
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap');
+
+        :root {
+            /* Themes */
+            --bg-color-dawn: #fdfaf6; --panel-bg-dawn: #ffffff; --text-color-dawn: #5c5470; --heading-color-dawn: #352f44; --accent-color-dawn: #b9a5d6; --subtle-accent-dawn: #d6cadd; --border-color-dawn: #e0d9e9; --shadow-color-dawn: rgba(53, 47, 68, 0.08);
+            --bg-color-twilight: #2c3e50; --panel-bg-twilight: #34495e; --text-color-twilight: #ecf0f1; --heading-color-twilight: #ffffff; --accent-color-twilight: #9b59b6; --subtle-accent-twilight: #8e44ad; --border-color-twilight: #2c3e50; --shadow-color-twilight: rgba(0, 0, 0, 0.2);
+            --bg-color-meadow: #f0f4f0; --panel-bg-meadow: #ffffff; --text-color-meadow: #556b55; --heading-color-meadow: #3a523a; --accent-color-meadow: #82a882; --subtle-accent-meadow: #a3c3a3; --border-color-meadow: #e0e8e0; --shadow-color-meadow: rgba(58, 82, 58, 0.1);
+            --bg-color-sunset: #3B314D; --panel-bg-sunset: #4C3F63; --text-color-sunset: #EAE2F8; --heading-color-sunset: #FFFFFF; --accent-color-sunset: #E88D67; --subtle-accent-sunset: #C37B89; --border-color-sunset: #3B314D; --shadow-color-sunset: rgba(0, 0, 0, 0.2);
+            --bg-color-ocean: #F0F7F8; --panel-bg-ocean: #FFFFFF; --text-color-ocean: #4A6C6F; --heading-color-ocean: #2C4A52; --accent-color-ocean: #5DAA9F; --subtle-accent-ocean: #A8D5D1; --border-color-ocean: #DDE9EB; --shadow-color-ocean: rgba(74, 108, 111, 0.1);
         }
-        input, button {
+
+        [data-theme="dawn"] { --bg-color: var(--bg-color-dawn); --panel-bg: var(--panel-bg-dawn); --text-color: var(--text-color-dawn); --heading-color: var(--heading-color-dawn); --accent-color: var(--accent-color-dawn); --subtle-accent: var(--subtle-accent-dawn); --border-color: var(--border-color-dawn); --shadow-color: var(--shadow-color-dawn); }
+        [data-theme="twilight"] { --bg-color: var(--bg-color-twilight); --panel-bg: var(--panel-bg-twilight); --text-color: var(--text-color-twilight); --heading-color: var(--heading-color-twilight); --accent-color: var(--accent-color-twilight); --subtle-accent: var(--subtle-accent-twilight); --border-color: var(--border-color-twilight); --shadow-color: var(--shadow-color-twilight); }
+        [data-theme="meadow"] { --bg-color: var(--bg-color-meadow); --panel-bg: var(--panel-bg-meadow); --text-color: var(--text-color-meadow); --heading-color: var(--heading-color-meadow); --accent-color: var(--accent-color-meadow); --subtle-accent: var(--subtle-accent-meadow); --border-color: var(--border-color-meadow); --shadow-color: var(--shadow-color-meadow); }
+        [data-theme="sunset"] { --bg-color: var(--bg-color-sunset); --panel-bg: var(--panel-bg-sunset); --text-color: var(--text-color-sunset); --heading-color: var(--heading-color-sunset); --accent-color: var(--accent-color-sunset); --subtle-accent: var(--subtle-accent-sunset); --border-color: var(--border-color-sunset); --shadow-color: var(--shadow-color-sunset); }
+        [data-theme="ocean"] { --bg-color: var(--bg-color-ocean); --panel-bg: var(--panel-bg-ocean); --text-color: var(--text-color-ocean); --heading-color: var(--heading-color-ocean); --accent-color: var(--accent-color-ocean); --subtle-accent: var(--subtle-accent-ocean); --border-color: var(--border-color-ocean); --shadow-color: var(--shadow-color-ocean); }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            height: 100vh;
+            transition: background-color 0.5s, color 0.5s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page-wrapper {
             width: 100%;
-            padding: 8px;
-            margin: 6px 0;
+            max-width: 450px;
+            padding: 20px;
             box-sizing: border-box;
         }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 20px;
         }
+
+        .main-title {
+            font-family: 'Lora', serif;
+            font-size: 2.2em;
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .widget {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: background-color 0.5s, border-color 0.5s;
+        }
+
+        h2 {
+            font-family: 'Lora', serif;
+            color: var(--heading-color);
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--subtle-accent);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover { filter: brightness(1.1); }
+        button:active { transform: scale(0.98); filter: brightness(0.95); }
+
         .signup-link {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 20px;
         }
+        .signup-link a {
+            color: var(--accent-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Theme Switcher Popup */
+        .theme-switcher { position: absolute; top: 10px; right: 0; }
+        .theme-icon { cursor: pointer; width: 30px; height: 30px; fill: var(--heading-color); }
+        .theme-popup { display: none; position: absolute; top: 40px; right: 0; background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 4px 20px var(--shadow-color); padding: 10px; z-index: 100; }
+        .theme-popup.show { display: block; }
+        .theme-popup button { display: block; width: 100%; text-align: left; margin-bottom: 5px; }
+        .theme-popup button:last-child { margin-bottom: 0; }
+
     </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form method="post" action="">
-        {% csrf_token %}
-        <label>Username:</label>
-        <input type="text" name="username" required />
+    <div class="page-wrapper">
+        <div class="header">
+            <h1 class="main-title">Welcome Back</h1>
+            <div class="theme-switcher">
+                <svg id="theme-icon" class="theme-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2ZM12,4.17A7.83,7.83,0,1,1,4.17,12,7.83,7.83,0,0,1,12,4.17ZM12,5.5A6.5,6.5,0,0,0,5.5,12H7.83A4.17,4.17,0,0,1,12,7.83Z"/></svg>
+                <div id="theme-popup" class="theme-popup">
+                    <button data-theme="dawn">Dawn</button>
+                    <button data-theme="twilight">Twilight</button>
+                    <button data-theme="meadow">Meadow</button>
+                    <button data-theme="sunset">Sunset</button>
+                    <button data-theme="ocean">Ocean</button>
+                </div>
+            </div>
+        </div>
+        <div class="widget">
+            <h2>Enter the Diary</h2>
+            <form method="post" action="">
+                {% csrf_token %}
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="username" required />
 
-        <label>Password:</label>
-        <input type="password" name="password" required />
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required />
 
-        <button type="submit">Login</button>
-    </form>
-
-    <div class="signup-link">
-        <p>Don't have an account? <a href="{% url 'register_user' %}">Sign Up</a></p>
+                <button type="submit">Open the Pages</button>
+            </form>
+            <div class="signup-link">
+                <p>First time here? <a href="{% url 'register_user' %}">Create your own diary</a></p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Theme Switcher Logic
+        const themeIcon = document.getElementById('theme-icon');
+        const themePopup = document.getElementById('theme-popup');
+        const themeButtons = themePopup.querySelectorAll('button');
+        const body = document.body;
+
+        function setTheme(theme) {
+            body.setAttribute('data-theme', theme);
+            localStorage.setItem('selectedTheme', theme);
+        }
+
+        themeIcon.addEventListener('click', (event) => {
+            event.stopPropagation();
+            themePopup.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            if (themePopup.classList.contains('show')) {
+                themePopup.classList.remove('show');
+            }
+        });
+
+        themeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-theme');
+                setTheme(theme);
+            });
+        });
+
+        const savedTheme = localStorage.getItem('selectedTheme') || 'dawn';
+        setTheme(savedTheme);
+    </script>
 </body>
 </html>
