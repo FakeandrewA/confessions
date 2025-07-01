@@ -2,33 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>A Safe Space</title>
+    <title>Whispers from the World</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap');
 
         :root {
-            --bg-color: #fdfaf6;
-            --panel-bg: #ffffff;
-            --text-color: #5c5470;
-            --heading-color: #352f44;
-            --accent-color: #b9a5d6;
-            --subtle-accent: #d6cadd;
-            --border-color: #e0d9e9;
-            --shadow-color: rgba(53, 47, 68, 0.08);
+            --bg-color-dawn: #fdfaf6;
+            --panel-bg-dawn: #ffffff;
+            --text-color-dawn: #5c5470;
+            --heading-color-dawn: #352f44;
+            --accent-color-dawn: #b9a5d6;
+            --subtle-accent-dawn: #d6cadd;
+            --border-color-dawn: #e0d9e9;
+            --shadow-color-dawn: rgba(53, 47, 68, 0.08);
+
+            --bg-color-twilight: #2c3e50;
+            --panel-bg-twilight: #34495e;
+            --text-color-twilight: #ecf0f1;
+            --heading-color-twilight: #ffffff;
+            --accent-color-twilight: #9b59b6;
+            --subtle-accent-twilight: #8e44ad;
+            --border-color-twilight: #2c3e50;
+            --shadow-color-twilight: rgba(0, 0, 0, 0.2);
+
+            --bg-color-meadow: #f0f4f0;
+            --panel-bg-meadow: #ffffff;
+            --text-color-meadow: #556b55;
+            --heading-color-meadow: #3a523a;
+            --accent-color-meadow: #82a882;
+            --subtle-accent-meadow: #a3c3a3;
+            --border-color-meadow: #e0e8e0;
+            --shadow-color-meadow: rgba(58, 82, 58, 0.1);
+        }
+
+        [data-theme="dawn"] {
+            --bg-color: var(--bg-color-dawn);
+            --panel-bg: var(--panel-bg-dawn);
+            --text-color: var(--text-color-dawn);
+            --heading-color: var(--heading-color-dawn);
+            --accent-color: var(--accent-color-dawn);
+            --subtle-accent: var(--subtle-accent-dawn);
+            --border-color: var(--border-color-dawn);
+            --shadow-color: var(--shadow-color-dawn);
+        }
+
+        [data-theme="twilight"] {
+            --bg-color: var(--bg-color-twilight);
+            --panel-bg: var(--panel-bg-twilight);
+            --text-color: var(--text-color-twilight);
+            --heading-color: var(--heading-color-twilight);
+            --accent-color: var(--accent-color-twilight);
+            --subtle-accent: var(--subtle-accent-twilight);
+            --border-color: var(--border-color-twilight);
+            --shadow-color: var(--shadow-color-twilight);
+        }
+
+        [data-theme="meadow"] {
+            --bg-color: var(--bg-color-meadow);
+            --panel-bg: var(--panel-bg-meadow);
+            --text-color: var(--text-color-meadow);
+            --heading-color: var(--heading-color-meadow);
+            --accent-color: var(--accent-color-meadow);
+            --subtle-accent: var(--subtle-accent-meadow);
+            --border-color: var(--border-color-meadow);
+            --shadow-color: var(--shadow-color-meadow);
         }
 
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: var(--bg-color);
-            background-image: linear-gradient(rgba(0,0,0,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.015) 1px, transparent 1px);
-            background-size: 20px 20px;
             color: var(--text-color);
             margin: 0;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .main-title {
+            font-family: 'Lora', serif;
+            font-size: 2.5em;
+            color: var(--heading-color);
+            margin-bottom: 20px;
         }
 
         .container {
@@ -37,7 +98,7 @@
             gap: 25px;
             width: 100%;
             max-width: 1200px;
-            height: 85vh;
+            height: 80vh;
         }
 
         .widget {
@@ -48,11 +109,14 @@
             box-shadow: 0 4px 20px var(--shadow-color);
             display: flex;
             flex-direction: column;
+            transition: background-color 0.5s, border-color 0.5s;
         }
 
         .journal {
             grid-column: 1 / 2;
             grid-row: 1 / 3;
+            position: relative;
+            padding-bottom: 80px; /* Space for the fixed logout button */
         }
 
         .right-panel {
@@ -86,18 +150,13 @@
             color: var(--text-color);
             font-family: 'Quicksand', sans-serif;
             font-size: 1em;
-            box-sizing: border-box; /* Fixes the grid alignment issue */
+            box-sizing: border-box;
+            transition: background-color 0.5s, color 0.5s, border-color 0.5s;
         }
 
         textarea {
             resize: none;
             flex-grow: 1;
-            background-image: repeating-linear-gradient(var(--bg-color), var(--bg-color) 29px, var(--subtle-accent) 30px);
-            line-height: 30px;
-            padding-top: 10px;
-        }
-        textarea:focus {
-            outline: 1px solid var(--accent-color);
         }
 
         button {
@@ -109,19 +168,19 @@
         }
 
         button:hover {
-            background-color: #a892c7;
+            filter: brightness(1.1);
         }
         
         .logout-form {
-            margin-top: auto;
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
         }
 
         .logout-button {
             background-color: var(--subtle-accent);
             color: var(--heading-color);
-        }
-        .logout-button:hover {
-            background-color: #c7b8d8;
         }
 
         ul {
@@ -131,35 +190,20 @@
         }
 
         li {
-            background-color: #fdfdff;
+            background-color: rgba(0,0,0,0.02);
             padding: 20px;
             margin-bottom: 15px;
             border-radius: 10px;
-            border: 1px solid #f0ebf5;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: 'Lora', serif;
             font-style: italic;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        li:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px var(--shadow-color);
         }
 
         .post-content {
             flex-grow: 1;
             margin-right: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .post-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            opacity: 0.5;
         }
 
         .post-actions {
@@ -181,13 +225,23 @@
             font-weight: 600;
         }
         .post-actions button:hover {
-            color: var(--heading-color);
             text-decoration: underline;
+        }
+
+        .theme-switcher {
+            margin-bottom: 20px;
+        }
+
+        .theme-switcher button {
+            width: auto;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            margin: 0 5px;
         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
             background: var(--subtle-accent);
             border-radius: 10px;
@@ -199,49 +253,79 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="journal widget">
-            <h2>Your Private Corner</h2>
-            <form method="post" action="/confessions/create/" style="display: flex; flex-direction: column; flex-grow: 1;">
-                {% csrf_token %}
-                <textarea name="content" placeholder="Let your thoughts find a home..." required></textarea>
-                <button type="submit">Share Anonymously</button>
-            </form>
-            <form class="logout-form" action="logout/" method="post">
-                {% csrf_token %}
-                <button type="submit" class="logout-button">Close Diary</button>
-            </form>
+    <div class="page-wrapper">
+        <h1 class="main-title">Whispers from the World</h1>
+        <div class="theme-switcher">
+            <button data-theme="dawn">Dawn</button>
+            <button data-theme="twilight">Twilight</button>
+            <button data-theme="meadow">Meadow</button>
         </div>
-        <div class="right-panel">
-            <div class="my-diary widget">
-                <h2>My Chapters</h2>
-                <ul>
-                    {% for confession in confessions %}
-                        <li>
-                            <span class="post-content">
-                                <svg class="post-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.7,5.2a1,1,0,0,0-1.4,0L13,11.58V3a1,1,0,0,0-2,0V11.58L4.7,5.2a1,1,0,0,0-1.4,1.4L9.58,13H2a1,1,0,0,0,0,2H9.58L3.3,21.2a1,1,0,0,0,1.4,1.4L11,16.42V21a1,1,0,0,0,2,0V16.42l6.3,6.3a1,1,0,0,0,1.4-1.4L14.42,15H22a1,1,0,0,0,0-2H14.42l6.3-6.3A1,1,0,0,0,20.7,5.2Z"/></svg>
-                                {{ confession.content }}
-                            </span>
-                            <div class="post-actions">
-                                <button>Rewrite</button>
-                                <button>Let Go</button>
-                            </div>
-                        </li>
-                    {% empty %}
-                        <li>Your diary is empty.</li>
-                    {% endfor %}
-                </ul>
+        <div class="container">
+            <div class="journal widget">
+                <h2>Your Private Corner</h2>
+                <form method="post" action="/confessions/create/" style="display: flex; flex-direction: column; height: 100%;">
+                    {% csrf_token %}
+                    <textarea name="content" placeholder="Let your thoughts find a home..." required></textarea>
+                    <button type="submit">Share Anonymously</button>
+                </form>
+                <form class="logout-form" action="logout/" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Close Diary</button>
+                </form>
             </div>
-            <div class="shared-thoughts widget">
-                <h2>Echoes from Others</h2>
-                <ul>
-                    {# Placeholder for other users' posts #}
-                    <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
-                    <li><span class="post-content">"I wish I could tell them how much they mean to me."</span></li>
-                    <li><span class="post-content">"Today was a hard day, but reading these makes me feel less alone."</span></li>
-                </ul>
+            <div class="right-panel">
+                <div class="my-diary widget">
+                    <h2>My Chapters</h2>
+                    <ul>
+                        {% for confession in confessions %}
+                            <li>
+                                <span class="post-content">{{ confession.content }}</span>
+                                <div class="post-actions">
+                                    <button>Rewrite</button>
+                                    <button>Let Go</button>
+                                </div>
+                            </li>
+                        {% empty %}
+                            <li>Your diary is empty.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="shared-thoughts widget">
+                    <h2>Echoes from Others</h2>
+                    <ul>
+                        {# Placeholder for other users' posts #}
+                        <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
+                        <li><span class="post-content">"I wish I could tell them how much they mean to me."</span></li>
+                        <li><span class="post-content">"Today was a hard day, but reading these makes me feel less alone."</span></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const themeButtons = document.querySelectorAll('.theme-switcher button');
+        const body = document.body;
+
+        function setTheme(theme) {
+            body.setAttribute('data-theme', theme);
+            localStorage.setItem('selectedTheme', theme);
+        }
+
+        themeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-theme');
+                setTheme(theme);
+            });
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('selectedTheme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            setTheme('dawn'); // Default theme
+        }
+    </script>
 </body>
 </html>
