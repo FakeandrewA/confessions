@@ -7,15 +7,11 @@
         @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap');
 
         :root {
-            /* Theme: Dawn */
+            /* Themes */
             --bg-color-dawn: #fdfaf6; --panel-bg-dawn: #ffffff; --text-color-dawn: #5c5470; --heading-color-dawn: #352f44; --accent-color-dawn: #b9a5d6; --subtle-accent-dawn: #d6cadd; --border-color-dawn: #e0d9e9; --shadow-color-dawn: rgba(53, 47, 68, 0.08);
-            /* Theme: Twilight */
             --bg-color-twilight: #2c3e50; --panel-bg-twilight: #34495e; --text-color-twilight: #ecf0f1; --heading-color-twilight: #ffffff; --accent-color-twilight: #9b59b6; --subtle-accent-twilight: #8e44ad; --border-color-twilight: #2c3e50; --shadow-color-twilight: rgba(0, 0, 0, 0.2);
-            /* Theme: Meadow */
             --bg-color-meadow: #f0f4f0; --panel-bg-meadow: #ffffff; --text-color-meadow: #556b55; --heading-color-meadow: #3a523a; --accent-color-meadow: #82a882; --subtle-accent-meadow: #a3c3a3; --border-color-meadow: #e0e8e0; --shadow-color-meadow: rgba(58, 82, 58, 0.1);
-            /* Theme: Sunset */
             --bg-color-sunset: #3B314D; --panel-bg-sunset: #4C3F63; --text-color-sunset: #EAE2F8; --heading-color-sunset: #FFFFFF; --accent-color-sunset: #E88D67; --subtle-accent-sunset: #C37B89; --border-color-sunset: #3B314D; --shadow-color-sunset: rgba(0, 0, 0, 0.2);
-            /* Theme: Ocean */
             --bg-color-ocean: #F0F7F8; --panel-bg-ocean: #FFFFFF; --text-color-ocean: #4A6C6F; --heading-color-ocean: #2C4A52; --accent-color-ocean: #5DAA9F; --subtle-accent-ocean: #A8D5D1; --border-color-ocean: #DDE9EB; --shadow-color-ocean: rgba(74, 108, 111, 0.1);
         }
 
@@ -31,7 +27,7 @@
             color: var(--text-color);
             margin: 0;
             height: 100vh;
-            overflow: hidden; /* Prevents the main body from scrolling */
+            overflow: hidden;
             transition: background-color 0.5s, color 0.5s;
         }
 
@@ -43,28 +39,30 @@
             box-sizing: border-box;
         }
 
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
         .main-title {
             font-family: 'Lora', serif;
             font-size: 2.2em;
             color: var(--heading-color);
-            text-align: center;
-            margin: 0 0 15px 0;
-        }
-        
-        .theme-switcher {
-            text-align: center;
-            margin-bottom: 15px;
+            margin: 0;
         }
 
         .container {
-            flex-grow: 1; /* Takes up all available vertical space */
+            flex-grow: 1;
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 25px;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
-            min-height: 0; /* Flexbox/Grid fix for overflow */
+            min-height: 0;
         }
 
         .widget {
@@ -79,9 +77,7 @@
             min-height: 0;
         }
 
-        .journal {
-            position: relative;
-        }
+        .journal { position: relative; }
 
         .right-panel {
             display: grid;
@@ -90,8 +86,30 @@
             min-height: 0;
         }
 
-        .my-diary, .shared-thoughts {
-            overflow-y: auto;
+        .scroll-widget h2 {
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .scroll-container {
+            flex-grow: 1;
+            overflow: hidden; /* Changed from auto to hidden for animation */
+            position: relative;
+            -webkit-mask-image: linear-gradient(transparent, black 10%, black 90%, transparent);
+            mask-image: linear-gradient(transparent, black 10%, black 90%, transparent);
+        }
+
+        .scroll-container ul {
+            animation: autoscroll 60s linear infinite;
+        }
+
+        .scroll-container:hover ul {
+            animation-play-state: paused;
+        }
+
+        @keyframes autoscroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-50%); }
         }
 
         h2 {
@@ -117,10 +135,7 @@
             transition: background-color 0.5s, color 0.5s, border-color 0.5s;
         }
 
-        textarea {
-            resize: none;
-            flex-grow: 1;
-        }
+        textarea { resize: none; flex-grow: 1; }
 
         button {
             background-color: var(--accent-color);
@@ -130,25 +145,11 @@
             transition: background-color 0.3s;
         }
 
-        button:hover {
-            filter: brightness(1.1);
-        }
+        button:hover { filter: brightness(1.1); }
         
-        .journal-form {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .logout-form {
-            margin-top: auto; /* Pushes to the bottom */
-            padding-top: 15px; /* Space above the button */
-        }
-
-        .logout-button {
-            background-color: var(--subtle-accent);
-            color: var(--heading-color);
-        }
+        .journal-form { display: flex; flex-direction: column; height: 100%; }
+        .logout-form { margin-top: auto; padding-top: 15px; }
+        .logout-button { background-color: var(--subtle-accent); color: var(--heading-color); }
 
         ul { list-style: none; padding: 0; margin: 0; }
 
@@ -165,36 +166,48 @@
         }
 
         .post-content { flex-grow: 1; margin-right: 15px; }
-
         .post-actions { opacity: 0; transition: opacity 0.3s; }
         li:hover .post-actions { opacity: 1; }
-
-        .post-actions button {
-            padding: 5px 10px; font-size: 0.8em; margin-left: 5px; width: auto;
-            background: none; border: none; color: var(--accent-color); font-weight: 600;
-        }
+        .post-actions button { padding: 5px 10px; font-size: 0.8em; margin-left: 5px; width: auto; background: none; border: none; color: var(--accent-color); font-weight: 600; }
         .post-actions button:hover { text-decoration: underline; }
 
-        .theme-switcher button {
-            width: auto; padding: 8px 15px; font-size: 0.9em; margin: 0 5px;
+        /* Theme Switcher Popup */
+        .theme-switcher { position: absolute; top: 10px; right: 20px; }
+        .theme-icon { cursor: pointer; width: 30px; height: 30px; fill: var(--heading-color); }
+        .theme-popup {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            padding: 10px;
+            z-index: 100;
         }
+        .theme-popup.show { display: block; }
+        .theme-popup button { display: block; width: 100%; text-align: left; margin-bottom: 5px; }
+        .theme-popup button:last-child { margin-bottom: 0; }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--subtle-accent); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+        ::-webkit-scrollbar { display: none; } /* Hide scrollbar as it's automatic */
 
     </style>
 </head>
 <body>
     <div class="page-wrapper">
-        <h1 class="main-title">Whispers from the World</h1>
-        <div class="theme-switcher">
-            <button data-theme="dawn">Dawn</button>
-            <button data-theme="twilight">Twilight</button>
-            <button data-theme="meadow">Meadow</button>
-            <button data-theme="sunset">Sunset</button>
-            <button data-theme="ocean">Ocean</button>
+        <div class="header">
+            <h1 class="main-title">Whispers from the World</h1>
+            <div class="theme-switcher">
+                <svg id="theme-icon" class="theme-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2ZM12,4.17A7.83,7.83,0,1,1,4.17,12,7.83,7.83,0,0,1,12,4.17ZM12,5.5A6.5,6.5,0,0,0,5.5,12H7.83A4.17,4.17,0,0,1,12,7.83Z"/></svg>
+                <div id="theme-popup" class="theme-popup">
+                    <button data-theme="dawn">Dawn</button>
+                    <button data-theme="twilight">Twilight</button>
+                    <button data-theme="meadow">Meadow</button>
+                    <button data-theme="sunset">Sunset</button>
+                    <button data-theme="ocean">Ocean</button>
+                </div>
+            </div>
         </div>
         <div class="container">
             <div class="journal widget">
@@ -209,42 +222,62 @@
                 </form>
             </div>
             <div class="right-panel">
-                <div class="my-diary widget">
+                <div class="my-diary widget scroll-widget">
                     <h2>My Chapters</h2>
-                    <ul>
-                        {% for confession in confessions %}
-                            <li>
-                                <span class="post-content">{{ confession.content }}</span>
-                                <div class="post-actions">
-                                    <button>Rewrite</button>
-                                    <button>Let Go</button>
-                                </div>
-                            </li>
-                        {% empty %}
-                            <li>Your diary is empty.</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="scroll-container">
+                        <ul>
+                            {% for confession in confessions %}
+                                <li>
+                                    <span class="post-content">{{ confession.content }}</span>
+                                    <div class="post-actions">
+                                        <button>Rewrite</button>
+                                        <button>Let Go</button>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li>Your diary is empty.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-                <div class="shared-thoughts widget">
+                <div class="shared-thoughts widget scroll-widget">
                     <h2>Echoes from Others</h2>
-                    <ul>
-                        <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
-                        <li><span class="post-content">"I wish I could tell them how much they mean to me."</span></li>
-                        <li><span class="post-content">"Today was a hard day, but reading these makes me feel less alone."</span></li>
-                    </ul>
+                    <div class="scroll-container">
+                        <ul>
+                            <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
+                            <li><span class="post-content">"I wish I could tell them how much they mean to me."</span></li>
+                            <li><span class="post-content">"Today was a hard day, but reading these makes me feel less alone."</span></li>
+                            <li><span class="post-content">"It's strange and beautiful to see a stranger put your own feelings into words."</span></li>
+                            <li><span class="post-content">"I held my breath reading this. So honest. So real."</span></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const themeButtons = document.querySelectorAll('.theme-switcher button');
+        // Theme Switcher Logic
+        const themeIcon = document.getElementById('theme-icon');
+        const themePopup = document.getElementById('theme-popup');
+        const themeButtons = themePopup.querySelectorAll('button');
         const body = document.body;
 
         function setTheme(theme) {
             body.setAttribute('data-theme', theme);
             localStorage.setItem('selectedTheme', theme);
         }
+
+        themeIcon.addEventListener('click', (event) => {
+            event.stopPropagation();
+            themePopup.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => {
+            if (themePopup.classList.contains('show')) {
+                themePopup.classList.remove('show');
+            }
+        });
 
         themeButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -255,6 +288,18 @@
 
         const savedTheme = localStorage.getItem('selectedTheme') || 'dawn';
         setTheme(savedTheme);
+
+        // Auto-scrolling Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const scrollContainers = document.querySelectorAll('.scroll-container');
+            scrollContainers.forEach(container => {
+                const list = container.querySelector('ul');
+                if (list && list.children.length > 1) {
+                    // Duplicate content for seamless loop
+                    list.innerHTML += list.innerHTML;
+                }
+            });
+        });
     </script>
 </body>
 </html>
