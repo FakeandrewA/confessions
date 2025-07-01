@@ -2,21 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Home - Cybernetic UI</title>
+    <title>A Safe Space</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap');
 
         :root {
-            --bg-color: #02041b;
-            --primary-glow: #00e1ff;
-            --secondary-glow: #ff00c1;
-            --text-color: #d0d8f0;
-            --panel-bg: rgba(10, 15, 40, 0.5);
-            --border-color: rgba(0, 225, 255, 0.4);
+            --bg-color: #fdfaf6;
+            --panel-bg: #ffffff;
+            --text-color: #5c5470;
+            --heading-color: #352f44;
+            --accent-color: #b9a5d6;
+            --subtle-accent: #d6cadd;
+            --border-color: #e0d9e9;
+            --shadow-color: rgba(53, 47, 68, 0.08);
         }
 
         body {
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -25,38 +27,26 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 1px 1px, rgba(0, 225, 255, 0.3) 1px, transparent 0),
-                radial-gradient(circle at 15px 15px, rgba(0, 225, 255, 0.15) 1px, transparent 0);
-            background-size: 30px 30px;
         }
 
         .container {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 20px;
+            gap: 25px;
             width: 100%;
-            max-width: 1400px;
-            height: 90vh;
+            max-width: 1200px;
+            height: 85vh;
         }
 
-        .panel {
+        .widget {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 0 25px rgba(0, 225, 255, 0.1), inset 0 0 10px rgba(0, 225, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px var(--shadow-color);
         }
 
-        .panel:hover {
-            border-color: rgba(0, 225, 255, 0.8);
-            box-shadow: 0 0 35px rgba(0, 225, 255, 0.2), inset 0 0 15px rgba(0, 225, 255, 0.2);
-        }
-
-        .dashboard {
+        .journal {
             grid-column: 1 / 2;
             grid-row: 1 / 3;
             display: flex;
@@ -67,53 +57,56 @@
             grid-column: 2 / 3;
             display: grid;
             grid-template-rows: 1fr 1fr;
-            gap: 20px;
+            gap: 25px;
             height: 100%;
         }
 
-        .my-posts, .other-posts {
+        .my-diary, .shared-thoughts {
             overflow-y: auto;
         }
 
         h2 {
-            color: var(--primary-glow);
+            font-family: 'Lora', serif;
+            color: var(--heading-color);
             text-align: center;
             margin-top: 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 5px var(--primary-glow);
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         textarea, button {
             width: 100%;
             padding: 15px;
             margin-bottom: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.1em;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1em;
         }
 
         textarea {
             resize: none;
             flex-grow: 1;
+            background-image: repeating-linear-gradient(var(--bg-color), var(--bg-color) 29px, var(--subtle-accent) 30px);
+            line-height: 30px;
+            padding-top: 10px;
+        }
+        textarea:focus {
+            outline: 1px solid var(--accent-color);
         }
 
         button {
-            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
-            color: #fff;
-            font-weight: 700;
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 600;
             cursor: pointer;
-            border: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            text-transform: uppercase;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            box-shadow: 0 0 20px var(--primary-glow), 0 0 20px var(--secondary-glow);
-            transform: translateY(-2px);
+            background-color: #a892c7;
         }
         
         .logout-form {
@@ -121,10 +114,11 @@
         }
 
         .logout-button {
-             background: linear-gradient(45deg, #ff6b6b, #ff0055);
+            background-color: var(--subtle-accent);
+            color: var(--heading-color);
         }
         .logout-button:hover {
-            box-shadow: 0 0 20px #ff6b6b;
+            background-color: #c7b8d8;
         }
 
         ul {
@@ -134,18 +128,16 @@
         }
 
         li {
-            background-color: rgba(0,0,0,0.2);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border-left: 4px solid var(--primary-glow);
+            background-color: #fdfdff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #f0ebf5;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s;
-        }
-        li:hover {
-            background-color: rgba(0, 225, 255, 0.1);
+            font-family: 'Lora', serif;
+            font-style: italic;
         }
 
         .post-content {
@@ -153,87 +145,80 @@
             margin-right: 15px;
         }
 
-        .post-actions button {
-            padding: 6px 12px;
-            font-size: 0.9em;
-            margin-left: 8px;
-            width: auto;
-            background: none;
-            border: 1px solid;
+        .post-actions {
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        
-        .update-button {
-            border-color: var(--primary-glow);
-            color: var(--primary-glow);
-        }
-        .update-button:hover {
-            background-color: var(--primary-glow);
-            color: var(--bg-color);
-            box-shadow: 0 0 10px var(--primary-glow);
+        li:hover .post-actions {
+            opacity: 1;
         }
 
-        .delete-button {
-            border-color: var(--secondary-glow);
-            color: var(--secondary-glow);
+        .post-actions button {
+            padding: 5px 10px;
+            font-size: 0.8em;
+            margin-left: 5px;
+            width: auto;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-weight: 600;
         }
-        .delete-button:hover {
-            background-color: var(--secondary-glow);
-            color: var(--bg-color);
-            box-shadow: 0 0 10px var(--secondary-glow);
+        .post-actions button:hover {
+            color: var(--heading-color);
+            text-decoration: underline;
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(var(--primary-glow), var(--secondary-glow));
+            background: var(--subtle-accent);
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            box-shadow: 0 0 10px var(--primary-glow);
+            background: var(--accent-color);
         }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="dashboard panel">
-            <h2>Control Deck</h2>
+        <div class="journal widget">
+            <h2>Dear Diary...</h2>
             <form method="post" action="/confessions/create/" style="display: flex; flex-direction: column; height: 100%;">
                 {% csrf_token %}
-                <textarea name="content" placeholder="Broadcast your signal..." required></textarea>
-                <button type="submit">Transmit</button>
+                <textarea name="content" placeholder="What's on your mind?" required></textarea>
+                <button type="submit">Share Anonymously</button>
             </form>
             <form class="logout-form" action="logout/" method="post">
                 {% csrf_token %}
-                <button type="submit" class="logout-button">Disconnect</button>
+                <button type="submit" class="logout-button">Close Diary</button>
             </form>
         </div>
         <div class="right-panel">
-            <div class="my-posts panel">
-                <h2>My Signals</h2>
+            <div class="my-diary widget">
+                <h2>My Entries</h2>
                 <ul>
                     {% for confession in confessions %}
                         <li>
                             <span class="post-content">{{ confession.content }}</span>
                             <div class="post-actions">
-                                <button class="update-button">Modify</button>
-                                <button class="delete-button">Terminate</button>
+                                <button>Edit</button>
+                                <button>Delete</button>
                             </div>
                         </li>
                     {% empty %}
-                        <li>Signal feed is empty.</li>
+                        <li>Your diary is empty.</li>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="other-posts panel">
-                <h2>Network Echoes</h2>
+            <div class="shared-thoughts widget">
+                <h2>Shared Thoughts</h2>
                 <ul>
                     {# Placeholder for other users' posts #}
-                    <li><span class="post-content">Signal from User_7B34... connection is unstable.</span></li>
-                    <li><span class="post-content">Encrypted broadcast intercepted.</span></li>
-                    <li><span class="post-content">Public channel chatter: The rain in Neo-Kyoto is synthetic tonight.</span></li>
-                    <li><span class="post-content">I saw a ship glitter off the shoulder of Orion...</span></li>
+                    <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
+                    <li><span class="post-content">"I wish I could tell them how much they mean to me."</span></li>
+                    <li><span class="post-content">"Today was a hard day, but reading these makes me feel less alone."</span></li>
                 </ul>
             </div>
         </div>
