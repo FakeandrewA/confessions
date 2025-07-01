@@ -61,7 +61,8 @@ def logout_user(request):
 @login_required(login_url="/confessions/login/")
 def get_confessions(request):
     user_posts = UsersConfessions.objects.filter(user=request.user).order_by("-created_at")
-    return render(request,"confessions/home.html",{"confessions":user_posts})
+    others_posts = UsersConfessions.objects.exclude(user=request.user).order_by("-created_at")
+    return render(request,"confessions/home.html",{"confessions":user_posts,"others_confessions":others_posts})
 
 @require_POST
 @login_required

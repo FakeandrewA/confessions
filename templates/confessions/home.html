@@ -212,11 +212,13 @@
                     <h2>Echoes from Others</h2>
                     <div class="scroll-container">
                         <ul>
-                            <li><span class="post-content">"Sometimes I feel like I'm the only one who..."</span></li>
-                            <li><span class="post-content">"I wish I could tell them how much they mean to me."</span></li>
-                            <li><span class="post-content">"Today was a hard day, but reading these makes me feel less alone."</span></li>
-                            <li><span class="post-content">"It's strange and beautiful to see a stranger put your own feelings into words."</span></li>
-                            <li><span class="post-content">"I held my breath reading this. So honest. So real."</span></li>
+                            {% for confession in others_confessions %}
+                                <li>
+                                    <span class="post-content">{{ confession.content }}</span>
+                                </li>
+                            {% empty %}
+                                <li>No Confessions From Others Yet</li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
