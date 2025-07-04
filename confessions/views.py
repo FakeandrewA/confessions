@@ -29,6 +29,9 @@ def register_user(request):
                                  password=request.POST.get("password"),
                                  email=request.POST.get("email"))
         if(user_data.username != "" and user_data.password != ""):
+            if user_data.username.isdigit():
+                return JsonResponse({"error": "Username cannot be purely numeric"}, status=422)
+             
             user = User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
         else:
             return JsonResponse({"error":"Username or Password cannot be empty"},status=422)

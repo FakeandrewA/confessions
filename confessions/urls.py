@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import get_confessions,get_confession,post_confession,put_confession,delete_confession,register_user,login_user,logout_user
 
+app_name = "confessions"
 urlpatterns = [
     path("register/",register_user,name="register_user"),
     path("login/",login_user,name="login_user"),
