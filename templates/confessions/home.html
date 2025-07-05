@@ -195,10 +195,10 @@
                     <div class="scroll-container">
                         <ul>
                             {% for confession in confessions %}
-                                <li>
+                                <li id="confession_{{confession.id}}">
                                     <span class="post-content">{{ confession.content }}</span>
                                     <div class="post-actions">
-                                        <button>Rewrite</button>
+                                        <button onclick="enableEdit({{confession.id}})">Rewrite</button>
                                         <button onclick="deleteConfession({{ confession.id }})">Let Go</button>
                                     </div>
                                 </li>
@@ -227,6 +227,41 @@
     </div>
 
     <script>
+        function enableEdit(id){
+            console.log("hello");
+            const li = document.getElementById(`confession_${id}`);
+            console.log(li);
+            const span = li.querySelector(".post-content");
+            console.log(span);
+            const currentContent = span.textContent;
+
+            span.innerHTML = `
+            <input type="text" value="${currentContent.replace(/"/g, '&quot;')}" class="edit-input" style="width: 80%;">
+            <button onclick="saveEdit(${id})" style="margin-left: 5px;">Save</button>
+            `;
+        }
+        function saveEdit(id)
+        {
+            const li = document.getElementById(`confession_${id}`);
+            const input = li.querySelector(".edit-input")
+            const newContent = input.value.trim();
+            if (!newContent) return alert("Content cannot be empty.");
+            fetch(`/confessions/update/${id}/`,{
+                method:"PUT",
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({content:newContent})
+            }).then(response => {
+                if (!response.ok) throw new Error("Failed to update");
+                return response.json();
+            }).then(data => {
+                if(data.updated){
+                    li.querySelector(".post-content").textContent = data.content;
+                    window.location.reload()
+                }
+            })
+        }
         function deleteConfession(id){
             fetch(`/confessions/delete/${id}/`,{
                 method: "DELETE"

@@ -83,8 +83,13 @@ def get_confession(request,id:int):
 
 @require_http_methods(["PUT"])
 @login_required
+@csrf_exempt
 def put_confession(request,id:int):
-    return HttpResponse("updated a confession")
+    newContent = json.loads(request.body)["content"]
+    confession = get_object_or_404(UsersConfessions,id=id)
+    confession.content = newContent
+    confession.save()
+    return JsonResponse({"updated":True})
 
 
 @require_http_methods(["DELETE"])
