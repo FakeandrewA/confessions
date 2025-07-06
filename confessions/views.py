@@ -1,21 +1,27 @@
 import json
 
-from django.utils import timezone
-from django.shortcuts import render,redirect,get_object_or_404
+#decorators
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+# from django.views.decorators.csrf import csrf_exempt
+
+#shortcuts
+from django.shortcuts import render,redirect,get_object_or_404
 from django.forms.models import model_to_dict
 
-from django.contrib.auth.models import User
+#functions
 from django.contrib.auth import authenticate,login,logout
+from django.utils import timezone
 
+#response
 from django.http import JsonResponse
 
+#models and Schemas
+from django.contrib.auth.models import User
 from .schema import UserRegister,UserLogin
 from pydantic import ValidationError
-
 from .models import UsersConfessions
+
 # Create your views here.
 
 @require_http_methods(["GET","POST"])
@@ -45,6 +51,12 @@ def login_user(request):
         return render(request,"confessions/login.html")
     try:
         creds = UserLogin(username=request.POST.get("username"),password=request.POST.get("password"))
+        
+        if creds.username == "" or creds.password == "":
+            return JsonResponse({"errors":"username and password cannot be empty"},status=422)
+        if creds.username.isdigit():
+                return JsonResponse({"error": "Username cannot be purely numeric"}, status=422)
+        
         user = authenticate(username=creds.username,password=creds.password)
         if user is not None:
             login(request,user)
@@ -54,6 +66,8 @@ def login_user(request):
     except ValidationError as e:
         return JsonResponse({"errors":e.errors()},status=422)
 
+
+# @csrf_exempt
 @require_POST
 def logout_user(request):
     logout(request)
