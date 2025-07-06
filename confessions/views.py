@@ -2,10 +2,10 @@ import json
 
 from django.utils import timezone
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.forms.models import model_to_dict
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
@@ -54,7 +54,6 @@ def login_user(request):
     except ValidationError as e:
         return JsonResponse({"errors":e.errors()},status=422)
 
-@csrf_exempt
 @require_POST
 def logout_user(request):
     logout(request)
@@ -79,23 +78,34 @@ def post_confession(request):
 @require_GET
 @login_required
 def get_confession(request,id:int):
-    return HttpResponse("got a confession")
+    confession = get_object_or_404(UsersConfessions,id=id)
+    if request.user == confession.user:
+        confession_dict = model_to_dict(confession)
+        return JsonResponse({"confession":confession_dict},status=200)
+    
+    return JsonResponse({"error":"unauthorized action"},status=403)
 
 @require_http_methods(["PUT"])
 @login_required
-@csrf_exempt
 def put_confession(request,id:int):
     newContent = json.loads(request.body)["content"]
     confession = get_object_or_404(UsersConfessions,id=id)
-    confession.content = newContent
-    confession.save()
-    return JsonResponse({"updated":True})
+    if request.user == confession.user:
+        confession.content = newContent
+        confession.save()
+        return JsonResponse({"updated":True})
+    return JsonResponse({"updated":False},status=403)
 
 
 @require_http_methods(["DELETE"])
 @login_required
-@csrf_exempt
 def delete_confession(request,id:int):
     confession = get_object_or_404(UsersConfessions,id=id)
-    confession.delete()
-    return JsonResponse({"deleted":True})
+    if request.user == confession.user:
+        confession.delete()
+        return JsonResponse({"deleted":True},status=204)
+    else:
+        return JsonResponse({"deleted":False},status=403)
+    
+    
+    

@@ -154,6 +154,39 @@
         .widget-decoration { text-align: center; margin-bottom: 10px; color: var(--subtle-accent); }
         .widget-decoration svg { width: 50px; height: 20px; }
 
+        .edit-input {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--subtle-accent);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 1.2em;
+            line-height: 1.5;
+        }
+        .edit-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        .edit-save-button {
+            width: auto;
+            padding: 8px 12px;
+            margin-bottom: 0;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--accent-color);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .edit-save-button:hover { filter: brightness(1.1); }
+
         ::-webkit-scrollbar { display: none; }
 
     </style>
@@ -178,7 +211,7 @@
                 <div class="widget-decoration">
                     <svg viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,10 Q25,0 50,10 T100,10" stroke="currentColor" fill="transparent" stroke-width="1"/></svg>
                 </div>
-                <form class="journal-form" method="post" action="/confessions/create/">
+                <form class="journal-form" method="post" action="create/">
                     <h2>My Diary</h2>
                     {% csrf_token %}
                     <textarea id="confession-textarea" name="content" placeholder="Let your thoughts find a home..." required></textarea>
@@ -227,17 +260,24 @@
     </div>
 
     <script>
+        function getCookie(name){
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
         function enableEdit(id){
             console.log("hello");
             const li = document.getElementById(`confession_${id}`);
+            li.style.display = 'flex';
             console.log(li);
             const span = li.querySelector(".post-content");
             console.log(span);
             const currentContent = span.textContent;
 
             span.innerHTML = `
-            <input type="text" value="${currentContent.replace(/"/g, '&quot;')}" class="edit-input" style="width: 80%;">
-            <button onclick="saveEdit(${id})" style="margin-left: 5px;">Save</button>
+            <input type="text" value="${currentContent.replace(/"/g, '&quot;')}" class="edit-input">
+            <button onclick="saveEdit(${id})" class="edit-save-button">Save</button>
+            <button onclick="discardEdit(${id})" class="edit-save-button">Discard</button>
             `;
         }
         function saveEdit(id)
@@ -249,7 +289,8 @@
             fetch(`/confessions/update/${id}/`,{
                 method:"PUT",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken':getCookie("csrftoken")
                 },
                 body:JSON.stringify({content:newContent})
             }).then(response => {
@@ -262,19 +303,37 @@
                 }
             })
         }
+        function discardEdit(id)
+        {
+            window.location.reload()
+            // fetch(`/confessions/${id}/`,{
+            //     method:"GET",
+            //     headers:{
+            //         "X-CSRFToken":getCookie("csrftoken"),
+            //     }
+            // }).then(response => {
+            //     if(!response.ok) throw new Error("Failed to update");
+            //     return response.json();
+            // }).then(data=>{
+            //     const li = document.getElementById(`confession_${id}`)
+            //     const span = li.querySelector(".post-content")
+            //     span.textContent = data["confession"]["content"]
+            //     window.location.reload()
+            // })
+        }
+        
         function deleteConfession(id){
             fetch(`/confessions/delete/${id}/`,{
-                method: "DELETE"
+                method: "DELETE",
+                headers:{
+                    "X-CSRFToken":getCookie("csrftoken"),
+                }
             }).then(response=>{
                 if(!response.ok)
                 {
                     throw new Error("Failed to delete");
                 }
-                return response.json();
-            }).then(data=>{
-                console.log(data);
-                console.log("Hello")
-                location.reload()
+                window.location.reload()
             })
         }
 
