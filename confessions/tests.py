@@ -1,10 +1,47 @@
-
+import html
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .models import UsersConfessions,Warnings,BlacklistedUsers
 from django.utils import timezone
 from django.urls import reverse
+from django.db.models import Q
 import os
+
+def create_test_user():
+    """
+    Creates a test user
+    """
+    user = User.objects.create_user(username="testuser",password="@Testpass123",email="testuser@email.com")
+    user.save()
+    Warnings.objects.create(user=user)
+    return user
+
+def create_test_user_2():
+    """
+    creates a another test user
+    """
+    user = User.objects.create_user(username="testuser2",password="@Testpass123",email="testuser2@email.com")
+    user.save()
+    Warnings.objects.create(user=user)
+    return user
+
+def create_test_user_1_with_data():
+    """
+    creates a test user and posts data 
+    """
+    test_user = create_test_user()
+    content="User 1 Content , which is in the valid form of the api's guidelines. Extra Content to be safe from violation."
+    UsersConfessions.objects.create(content=content,created_at=timezone.now(),user=test_user)
+    return {"user":test_user,"content":content}
+
+def create_test_user_2_with_data():
+    """
+    creates a test user 2 and posts data 
+    """
+    test_user = create_test_user_2()
+    content="User 2 Content , which is in the valid form of the api's guidelines. Extra Content to be safe from violation."
+    UsersConfessions.objects.create(content=content,created_at=timezone.now(),user=test_user)
+    return {"user":test_user,"content":content}
 
 def create_blacklisted_user():
     """
@@ -12,16 +49,17 @@ def create_blacklisted_user():
     """
     BlacklistedUsers.objects.create(username="testuser",email="testuser@email.com")
 
-def create_test_user():
+def create_about_to_be_blacklisted_user():
     """
-    Creates a test user
+    creates a about to be black listed user
     """
-    user = User.objects.create_user(username="testuser",password="@Testpass123")
-    user.save()
-    Warnings.objects.create(user=user)
-    return user
+    test_user = create_test_user()
+    warning_obj = Warnings.objects.get(user=test_user)
+    warning_obj.warning_count = 9
+    warning_obj.save()
+    return test_user
 
-# Create your tests here.
+#Create your tests here.
 class UserConfessionsModelTests(TestCase):
     def test_create_confession(self):
         test_user = create_test_user()
@@ -30,7 +68,7 @@ class UserConfessionsModelTests(TestCase):
         self.assertEqual(test_confession.content,UsersConfessions.objects.filter(user=test_user).first().content)
         self.assertEqual(test_confession.created_at,UsersConfessions.objects.filter(user=test_user).first().created_at)
 
-class UserConfessionsRegisterUserTests(TestCase):
+class RegisterUserViewTests(TestCase):
     def test_register_user_clientview(self):
         """
         For a get request the page should display a HTML with status_code 200
@@ -52,7 +90,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         response =self.client.post(reverse("confessions:register_user"),{
             "username":"testuser",
             "password":"@Testpass123",
-            "email":"test@email.com"
+            "email":"testuser@email.com"
         })
         
         self.assertEqual(response.status_code,302)
@@ -66,7 +104,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         response =self.client.post(reverse("confessions:register_user"),{
             "username":"",
             "password":"testpass",
-            "email":"test@email.com"
+            "email":"testuser@email.com"
         })
         self.assertContains(response,'<div class="page-wrapper">')
         self.assertContains(response,'<div class="widget">')
@@ -81,7 +119,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         response =self.client.post(reverse("confessions:register_user"),{
             "username":"testuser",
             "password":"",
-            "email":"test@email.com"
+            "email":"testuser@email.com"
         })
         self.assertContains(response,'<div class="page-wrapper">')
         self.assertContains(response,'<div class="widget">')
@@ -96,7 +134,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         response =self.client.post(reverse("confessions:register_user"),{
             "username":"",
             "password":"",
-            "email":"test@email.com"
+            "email":"testuser@email.com"
         })
         self.assertContains(response,'<div class="page-wrapper">')
         self.assertContains(response,'<div class="widget">')
@@ -111,7 +149,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         response =self.client.post(reverse("confessions:register_user"),{
             "username":1,
             "password":"123",
-            "email":"test@email.com"
+            "email":"testuser@email.com"
         })
         self.assertContains(response,'<div class="page-wrapper">')
         self.assertContains(response,'<div class="widget">')
@@ -156,7 +194,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         response =self.client.post(reverse("confessions:register_user"),{
             "username":"testuser",
             "password":"weakpassword",
-            "email":"test@email.com"
+            "email":"testuser@email.com"
         })
         
         self.assertContains(response,'<div class="page-wrapper">')
@@ -182,7 +220,7 @@ class UserConfessionsRegisterUserTests(TestCase):
         self.assertContains(response,"Username or email belongs to a blacklist")
         self.assertEqual(response.status_code,200)
 
-class UserConfessionsLoginUserTests(TestCase):
+class LoginUserViewTests(TestCase):
     def test_login_user_clientview(self):
         """
         For a get request the page should display a HTML with status_code 200
@@ -296,7 +334,7 @@ class UserConfessionsLoginUserTests(TestCase):
         self.assertContains(response,"Invalid Username or Password")
         self.assertEqual(response.status_code,200)
 
-class UserConfessionsLogoutUserTests(TestCase):
+class LogoutUserViewTests(TestCase):
     def test_logout_get_request(self):
         """
         For a get request with a logged in user , should return 302
@@ -338,3 +376,92 @@ class UserConfessionsLogoutUserTests(TestCase):
         self.assertEqual(response.status_code,302)
         self.assertRedirects(response,"/confessions/login/")
         self.assertTrue("_auth_user_id" not in self.client.session)
+
+class GetConfessionsViewTests(TestCase):
+    def test_get_confession_no_login(self):
+        """
+        For Unauthenticated get request return 302
+        """
+        response = self.client.get(reverse("confessions:homepage"))
+        self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse("confessions:login_user")+"?next=/confessions/")
+
+    def test_get_confessions_violation(self):
+        """
+        For a post request followed by redirect (get request) with violation true should return 200 with deletion of user from database and cascade delete all of his resources
+        """
+        #logging in 
+        about_to_be_blacklisted_user = create_about_to_be_blacklisted_user()
+        response = self.client.post(reverse("confessions:login_user"),{"username":about_to_be_blacklisted_user.username,"password":"@Testpass123"})
+        self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse("confessions:homepage"))
+        self.assertTrue("_auth_user_id" in self.client.session)
+        self.assertEqual(Warnings.objects.filter(user=about_to_be_blacklisted_user).first().warning_count,9)
+
+        #post content with tag to simulate violation
+        violated_content = "<script>alert(1)</script>"
+        response = self.client.post(reverse("confessions:post_confession"),{"content":violated_content},follow=True)
+        print(response)
+        self.assertEqual(response.status_code,200)
+        self.assertTrue(not Warnings.objects.filter(user=about_to_be_blacklisted_user).exists())
+        self.assertTrue(not UsersConfessions.objects.filter(user=about_to_be_blacklisted_user).exists())
+        self.assertTrue(BlacklistedUsers.objects.filter(Q(username=about_to_be_blacklisted_user.username) | Q(email=about_to_be_blacklisted_user.email)).exists())
+        self.assertTrue("_auth_user_id" not in self.client.session)
+        
+    def test_get_confessions_no_users_data(self):
+        """
+        For a get request following a new user logging in the dashboard should be empty
+        """    
+        test_user = create_test_user()
+        response = self.client.post(reverse("confessions:login_user"),{
+            "username":"testuser",
+            "password":"@Testpass123",
+        },follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'<div class="page-wrapper">')
+        self.assertContains(response,"Your diary is empty.")
+        self.assertContains(response,"No Confessions From Others Yet")
+
+    def test_get_confessions_only_user_data(self):
+        """
+        For a get request following a successfull post creation should return 200 and Server Side Rendered User data on the dashboard
+        """
+        test_user_with_data = create_test_user_1_with_data()
+        response = self.client.post(reverse("confessions:login_user"),{
+            "username":"testuser",
+            "password":"@Testpass123",
+        },follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'<div class="page-wrapper">')
+        self.assertContains(response,html.escape(test_user_with_data["content"]))
+        self.assertContains(response,"No Confessions From Others Yet")
+    
+    def test_get_confessions_only_other_users_data(self):
+        """
+        For a get request following a login with no data but other users data should return 200 and Server Side Rendered Other Users Data on dashboard
+        """
+        test_user_2_with_data = create_test_user_2_with_data()
+        test_user_1 = create_test_user()
+        response = self.client.post(reverse("confessions:login_user"),{
+            "username":"testuser",
+            "password":"@Testpass123",
+        },follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'<div class="page-wrapper">')
+        self.assertContains(response,html.escape(test_user_2_with_data["content"]))
+        self.assertContains(response,"Your diary is empty.")
+    
+    def test_get_confessions_all_users_data(self):
+        """
+        For a get request following a successfull post creation should return 200 and Server Side Rendered User data on the dashboard
+        """
+        test_user_2_with_data = create_test_user_2_with_data()
+        test_user_1_with_data = create_test_user_1_with_data()
+        response = self.client.post(reverse("confessions:login_user"),{
+            "username":"testuser",
+            "password":"@Testpass123",
+        },follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'<div class="page-wrapper">')
+        self.assertContains(response,html.escape(test_user_2_with_data["content"]))
+        self.assertContains(response,html.escape(test_user_1_with_data["content"]))
