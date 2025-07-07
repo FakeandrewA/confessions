@@ -31,21 +31,35 @@ def register_user(request):
         return render(request,"confessions/register.html")
     
     try:
+        #Validation for user_data
         user_data = UserRegister(username=request.POST.get("username"),
                                  password=request.POST.get("password"),
                                  email=request.POST.get("email"))
+        
+        #Check for empty password and username
         if(user_data.username != "" and user_data.password != ""):
+
+            #Check For Invalid Username
             username_pattern = re.compile(r'^[a-zA-Z](?:(?![_.]{2})[a-zA-Z0-9._]){7,29}$')
             if not username_pattern.match(user_data.username):
                 return render(request,"confessions/register.html",{"error":"Username must start with a letter, be 8-30 chars, contain only letters, numbers, . or _, and no consecutive . or _"})
             
+            #Check for weak password
+            password_pattern = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$')
+            if not password_pattern.match(user_data.password):
+                return render(request, "confessions/register.html", {"error": "Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character."})
+            
+            #Check for already existing User
             if User.objects.filter(username=user_data.username).exists():
                 return render(request,"confessions/register.html",{"error":"User already exists"})
             
+            #Create user if no errors were found
             User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
+
         else:
             return render(request,"confessions/register.html",{"error":"username and password cannot be empty"})
 
+        #Redirect to login if user successfully created
         return redirect("/confessions/login/")
     
     except ValidationError as e:
@@ -58,17 +72,13 @@ def login_user(request):
     try:
         creds = UserLogin(username=request.POST.get("username"),password=request.POST.get("password"))
         
-        if creds.username == "" or creds.password == "":
-            return JsonResponse({"errors":"username and password cannot be empty"},status=422)
-        if creds.username.isdigit():
-                return JsonResponse({"error": "Username cannot be purely numeric"}, status=422)
-        
         user = authenticate(username=creds.username,password=creds.password)
         if user is not None:
             login(request,user)
             return redirect("/confessions/")
         else:
-            return JsonResponse({"error":"Invalid Username or Password"},status=401)
+            return render(request,"confessions/login.html",{"error":"Invalid Username or Password"})
+        
     except ValidationError as e:
         return JsonResponse({"errors":e.errors()},status=422)
 

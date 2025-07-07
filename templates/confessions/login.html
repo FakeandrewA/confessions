@@ -164,6 +164,9 @@
             <div class="signup-link">
                 <p>First time here? <a href="{% url 'confessions:register_user' %}">Create your own diary</a></p>
             </div>
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
         </div>
     </div>
 
