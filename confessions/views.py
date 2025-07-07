@@ -1,5 +1,5 @@
 import json
-
+import re
 #decorators
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
 from django.contrib.auth.decorators import login_required
@@ -35,13 +35,19 @@ def register_user(request):
                                  password=request.POST.get("password"),
                                  email=request.POST.get("email"))
         if(user_data.username != "" and user_data.password != ""):
-            if user_data.username.isdigit():
-                return JsonResponse({"error": "Username cannot be purely numeric"}, status=422)
-             
-            user = User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
+            username_pattern = re.compile(r'^[a-zA-Z](?:(?![_.]{2})[a-zA-Z0-9._]){7,29}$')
+            if not username_pattern.match(user_data.username):
+                return render(request,"confessions/register.html",{"error":"Username must start with a letter, be 8-30 chars, contain only letters, numbers, . or _, and no consecutive . or _"})
+            
+            if User.objects.filter(username=user_data.username).exists():
+                return render(request,"confessions/register.html",{"error":"User already exists"})
+            
+            User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
         else:
-            return JsonResponse({"error":"Username or Password cannot be empty"},status=422)
+            return render(request,"confessions/register.html",{"error":"username and password cannot be empty"})
+
         return redirect("/confessions/login/")
+    
     except ValidationError as e:
         return JsonResponse({"error":e.errors()},status=422) 
     

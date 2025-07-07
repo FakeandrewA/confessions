@@ -170,6 +170,9 @@
             <div class="login-link">
                 <p>Already have a diary? <a href="{% url 'confessions:login_user' %}">Open it here</a></p>
             </div>
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
         </div>
     </div>
 
