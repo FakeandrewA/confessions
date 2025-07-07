@@ -1,5 +1,6 @@
 import json
 import re
+
 #decorators
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
 from django.contrib.auth.decorators import login_required
@@ -8,10 +9,13 @@ from django.contrib.auth.decorators import login_required
 #shortcuts
 from django.shortcuts import render,redirect,get_object_or_404
 from django.forms.models import model_to_dict
+from django.db.models import F,Q
 
 #functions
 from django.contrib.auth import authenticate,login,logout
 from django.utils import timezone
+from django.urls import reverse
+from datetime import timedelta
 
 #response
 from django.http import JsonResponse
@@ -20,11 +24,14 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .schema import UserRegister,UserLogin
 from pydantic import ValidationError
-from .models import UsersConfessions
+from .models import UsersConfessions,Warnings,BlacklistedUsers
+
+#utility
+from .utils import register_user_validator,post_confession_validator
 
 # Create your views here.
 
-@require_http_methods(["GET","POST"])
+@require_http_methods(["GET","POST"] )
 def register_user(request):
 
     if request.method == "GET":
@@ -35,32 +42,18 @@ def register_user(request):
         user_data = UserRegister(username=request.POST.get("username"),
                                  password=request.POST.get("password"),
                                  email=request.POST.get("email"))
+    
+        error_message = register_user_validator(request=request,username=user_data.username,email=user_data.email,password=user_data.password,userdb=User,blacklist_db=BlacklistedUsers)
         
-        #Check for empty password and username
-        if(user_data.username != "" and user_data.password != ""):
-
-            #Check For Invalid Username
-            username_pattern = re.compile(r'^[a-zA-Z](?:(?![_.]{2})[a-zA-Z0-9._]){7,29}$')
-            if not username_pattern.match(user_data.username):
-                return render(request,"confessions/register.html",{"error":"Username must start with a letter, be 8-30 chars, contain only letters, numbers, . or _, and no consecutive . or _"})
-            
-            #Check for weak password
-            password_pattern = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$')
-            if not password_pattern.match(user_data.password):
-                return render(request, "confessions/register.html", {"error": "Password must be at least 8 characters long, include uppercase, lowercase, digit, and special character."})
-            
-            #Check for already existing User
-            if User.objects.filter(username=user_data.username).exists():
-                return render(request,"confessions/register.html",{"error":"User already exists"})
-            
+        if not error_message:
             #Create user if no errors were found
-            User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
-
+            new_User = User.objects.create_user(username=user_data.username,password=user_data.password,email=user_data.email)
+            Warnings.objects.create(user=new_User) 
         else:
-            return render(request,"confessions/register.html",{"error":"username and password cannot be empty"})
-
+            return render(request,"confessions/register.html",{"error":error_message})
+        
         #Redirect to login if user successfully created
-        return redirect("/confessions/login/")
+        return redirect(reverse("confessions:login_user"))
     
     except ValidationError as e:
         return JsonResponse({"error":e.errors()},status=422) 
@@ -75,25 +68,43 @@ def login_user(request):
         user = authenticate(username=creds.username,password=creds.password)
         if user is not None:
             login(request,user)
-            return redirect("/confessions/")
+            return redirect(reverse("confessions:homepage"))
         else:
             return render(request,"confessions/login.html",{"error":"Invalid Username or Password"})
         
     except ValidationError as e:
         return JsonResponse({"errors":e.errors()},status=422)
 
-
-# @csrf_exempt
-@require_POST
+@require_http_methods(["GET","POST"])
 def logout_user(request):
     logout(request)
-    return redirect("/confessions/login/")
+    return redirect(reverse("confessions:login_user"))
 
 @require_GET
 @login_required(login_url="/confessions/login/")
 def get_confessions(request):
+
+    #Check for user's guidelines violation count 
+    if Warnings.objects.get(user=request.user).warning_count == 10:
+            UsersConfessions.objects.filter(user=request.user).delete()
+            Warnings.objects.filter(user=request.user).delete()
+            blacklisted_user = User.objects.get(id=request.user.id)
+            BlacklistedUsers.objects.create(email=blacklisted_user.email,username=blacklisted_user.username)
+            User.objects.filter(id=request.user.id).delete()
+            return redirect(reverse("confessions:logout_user"))
+    
+    error_message = request.GET.get("error")
+    if error_message:
+        # store temporarily in session or use Django messages
+        request.session['tmp_error'] = error_message
+        return redirect('/confessions/')  # remove query param
+    
     user_posts = UsersConfessions.objects.filter(user=request.user).order_by("-created_at")
     others_posts = UsersConfessions.objects.exclude(user=request.user).order_by("-created_at")
+
+    tmp_error = request.session.pop('tmp_error', None)
+    if tmp_error:
+        return render(request,"confessions/home.html",{"confessions":user_posts,"others_confessions":others_posts,"error":tmp_error})
     return render(request,"confessions/home.html",{"confessions":user_posts,"others_confessions":others_posts})
 
 @require_POST
@@ -102,8 +113,14 @@ def post_confession(request):
     content = request.POST.get("content")
     if not content:
         return JsonResponse({"error":"Content is required"},status=422)
+    
+    content = content.strip()
+    error_message = post_confession_validator(request,content,Warnings,UsersConfessions)
+    if error_message:
+        return redirect(f"{reverse('confessions:homepage')}?error={error_message}")
+    
     UsersConfessions.objects.create(content=content,user=request.user,created_at=timezone.now())
-    return redirect("/confessions/")
+    return redirect(reverse("confessions:homepage"))
 
 @require_GET
 @login_required

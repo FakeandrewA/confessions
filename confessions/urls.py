@@ -7,8 +7,8 @@ urlpatterns = [
     path("login/",login_user,name="login_user"),
     path("logout/",logout_user,name="logout_user"),
     path("",get_confessions,name="homepage"), # if request was get
-    path("<int:id>/",get_confession),
-    path("create/",post_confession),
-    path("update/<int:id>/",put_confession),
-    path("delete/<int:id>/",delete_confession)
+    path("<int:id>/",get_confession,name="get_confession"),
+    path("create/",post_confession,name="post_confession"),
+    path("update/<int:id>/",put_confession,name="update_confession"),
+    path("delete/<int:id>/",delete_confession,name="delete_confession")
 ]

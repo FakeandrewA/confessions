@@ -189,6 +189,24 @@
 
         ::-webkit-scrollbar { display: none; }
 
+         /* Error Message Toast */
+        .error {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffdddd;
+            color: #d8000c;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #ffc2c2;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+            z-index: 1001;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
     </style>
 </head>
 <body>
@@ -258,6 +276,9 @@
             </div>
         </div>
     </div>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
 
     <script>
         function getCookie(name){
@@ -400,6 +421,16 @@
                 }, 500);
             }, 4000);
         }
+
+        // Error message auto-hide
+        const errorDiv = document.querySelector('.error');
+        if (errorDiv) {
+            setTimeout(() => {
+                errorDiv.style.opacity = '0';
+                setTimeout(() => errorDiv.remove(), 500); // Remove from DOM after transition
+            }, 5000); // 5 seconds
+        }
+        
     </script>
 </body>
 </html>
